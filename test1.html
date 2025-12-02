@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Test 1 — Exam</title>
+<style>
+body{font-family:"Poppins",sans-serif;background:linear-gradient(135deg,#0f172a,#0f4c81);color:#fff;min-height:100vh;margin:0;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{width:100%;max-width:900px;background:rgba(255,255,255,0.05);padding:28px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.4);position:relative}
+header{text-align:center;margin-bottom:5px}
+header h1{font-size:22px;margin:0}
+.timer{font-size:22px;font-weight:700;background:rgba(255,255,255,0.1);padding:10px 18px;border-radius:15px;text-align:center;display:block;margin:10px auto 20px auto;border:2px solid rgba(255,255,255,0.2);color:#fff;width:fit-content}
+.timer.warning{color:#fbbf24}
+.timer.danger{color:#ef4444;animation:blink 1s infinite}
+@keyframes blink{0%,50%,100%{opacity:1}25%,75%{opacity:.3}}
+.question-area{margin-top:20px}
+.question{font-size:18px;margin-bottom:12px}
+.options{display:flex;flex-direction:column;gap:8px}
+.option{background:rgba(255,255,255,0.03);padding:12px;border-radius:8px;cursor:pointer;border:1px solid transparent}
+.option.selected{border-color:#60A5FA;background:rgba(96,165,250,0.12)}
+.controls{margin-top:18px;display:flex;gap:10px;justify-content:flex-end}
+button{padding:10px 14px;border-radius:8px;border:none;cursor:pointer;font-weight:600}
+.btn-next{background:#06b6d4;color:#001219}
+.btn-submit{background:#34d399;color:#032}
+.logout{position:absolute;right:18px;top:18px;background:#ef4444;color:#fff;border:none;padding:8px 10px;border-radius:8px;cursor:pointer}
+.admin-panel{position:absolute;left:18px;top:18px;background:#ffd166;color:#000;padding:8px 10px;border-radius:8px;display:none;cursor:pointer}
+.result{margin-top:16px;background:rgba(0,0,0,0.25);padding:14px;border-radius:8px;max-height:400px;overflow-y:auto}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="card" id="app">
+<button id="adminPanelBtn" class="admin-panel">⚙️ Admin</button>
+<button id="logout" class="logout">Logout</button>
+
+<header><h1>Test 1 — Online Exam</h1></header>
+<div class="timer" id="timer">⏱ Time: --:--</div>
+<div class="question-area" id="questionArea"></div>
+<div class="controls" id="controls">
+<button id="nextBtn" class="btn-next">Next</button>
+<button id="submitBtn" class="btn-submit">Submit</button>
+</div>
+<div id="feedback" class="result hidden"></div>
+</div>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import{getFirestore,collection,addDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig={apiKey:"AIzaSyB9Bb5XCQ4CSARFIn0Nmp_h56vJ0NDkpcU",authDomain:"login-89019.firebaseapp.com",projectId:"login-89019",storageBucket:"login-89019.firebasestorage.app",messagingSenderId:"342909176790",appId:"1:342909176790:web:583d43c716c8205f777277"};
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+
+const ADMIN_EMAIL="admin@gmail.com";
+const TEST_ID="test1";
+const DURATION_MINUTES=10;
+
+// --- Shuffle ---
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+// --- Questions ---
+const questions=[
+{id:"q1",q:"HTML stands for?",options:["Hyper Text Markup Language","Home Tool Markup Language","Hyperlinks and Text Markup Language","Highlevel Text Machine Language"],answerIndex:0},
+{id:"q2",q:"Which tag creates a hyperlink in HTML?",options:["<a>","<link>","<href>","<url>"],answerIndex:0},
+{id:"q3",q:"CSS is used for?",options:["Styling web pages","Storing data","Connecting database","Building server"],answerIndex:0},
+{id:"q4",q:"Which symbol is used for comments in JavaScript?",options:["//","<!-- -->","##","**"],answerIndex:0},
+{id:"q5",q:"Which company developed JavaScript?",options:["Mozilla","Microsoft","Netscape","Oracle"],answerIndex:2}
+];
+shuffle(questions);
+questions.forEach(q=>{const c=q.options[q.answerIndex];shuffle(q.options);q.answerIndex=q.options.indexOf(c);});
+
+// --- Elements ---
+const timerEl=document.getElementById("timer");
+const qArea=document.getElementById("questionArea");
+const nextBtn=document.getElementById("nextBtn");
+const submitBtn=document.getElementById("submitBtn");
+const feedbackEl=document.getElementById("feedback");
+const logoutBtn=document.getElementById("logout");
+const adminBtn=document.getElementById("adminPanelBtn");
+
+let currentIndex=0,answers={},remainingSeconds=DURATION_MINUTES*60,timerInterval=null;
+let hasSubmitted=false;
+
+// --- Auth ---
+onAuthStateChanged(auth,u=>{
+ if(!u){alert("Please login first.");location.href="admin_login.html";}
+ else if(u.email===ADMIN_EMAIL)adminBtn.style.display="inline-block";
+});
+logoutBtn.onclick=()=>signOut(auth).then(()=>location.href="admin_login.html");
+adminBtn.onclick=()=>location.href="admin_exam_panel.html";
+
+// --- Render Question ---
+function renderQuestion(i){
+ const q=questions[i];
+ qArea.innerHTML=`<div class='question'><strong>Q${i+1}.</strong> ${q.q}</div>
+ <div class='options'>${q.options.map((o,j)=>`<div class='option' data-idx='${j}'>${o}</div>`).join("")}</div>`;
+ qArea.querySelectorAll(".option").forEach(o=>{
+  o.onclick=()=>{qArea.querySelectorAll(".option").forEach(x=>x.classList.remove("selected"));
+  o.classList.add("selected");answers[q.id]=parseInt(o.dataset.idx);}
+ });
+}
+
+// --- Timer ---
+function startTimer(){updateTimerUI();timerInterval=setInterval(()=>{remainingSeconds--;updateTimerUI();
+ if(remainingSeconds<=0){clearInterval(timerInterval);autoSubmit("Time ended");}},1000);}
+function updateTimerUI(){const m=String(Math.floor(remainingSeconds/60)).padStart(2,"0"),s=String(remainingSeconds%60).padStart(2,"0");
+ timerEl.textContent=`⏱ Time: ${m}:${s}`;timerEl.classList.remove("warning","danger");
+ if(remainingSeconds<=60&&remainingSeconds>10)timerEl.classList.add("warning");
+ else if(remainingSeconds<=10)timerEl.classList.add("danger");
+}
+
+// --- Submit ---
+nextBtn.onclick=()=>{currentIndex=Math.min(questions.length-1,currentIndex+1);renderQuestion(currentIndex);}
+submitBtn.onclick=()=>{if(confirm("Submit test now?"))autoSubmit("Student submitted");}
+
+async function autoSubmit(reason){
+ if(hasSubmitted)return;hasSubmitted=true;
+ nextBtn.disabled=true;submitBtn.disabled=true;
+ document.querySelectorAll(".option").forEach(o=>o.style.pointerEvents="none");
+ if(timerInterval)clearInterval(timerInterval);
+
+ let correct=0;
+ const detailed=questions.map(q=>{
+  const sel=answers[q.id];const ok=sel===q.answerIndex;if(ok)correct++;
+  return{question:q.q,selected:sel,correctIndex:q.answerIndex,options:q.options,correct:ok};
+ });
+ const score=Math.round((correct/questions.length)*100);
+ const u=auth.currentUser;
+ const now=new Date();
+ const formatted=now.toLocaleString("en-IN",{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:true});
+
+ try{
+   await addDoc(collection(db,"examResults"),{
+     testId:TEST_ID,
+     studentEmail:u?.email||"unknown",
+     timestamp:serverTimestamp(),
+     dateString:formatted, // ✅ Save Date
+     reason,score,
+     correctCount:correct,
+     totalQuestions:questions.length,
+     answers:detailed
+   });
+ }catch(e){console.error("Save failed",e);}
+ showResult({score,correctCount:correct,totalQuestions:questions.length,answers:detailed,date:formatted});
+}
+
+// --- Show Result ---
+function showResult(r){
+ let html=`<h3>✅ Test Result</h3><div><b>Score:</b> ${r.score}% (${r.correctCount}/${r.totalQuestions})</div><div><b>Date:</b> ${r.date}</div><ol>`;
+ r.answers.forEach(a=>{
+  const sel=a.selected!=null?a.options[a.selected]:"<em>No answer</em>";
+  const corr=a.options[a.correctIndex];
+  const mark=a.correct?"<span style='color:#34d399'>Correct</span>":"<span style='color:#fb7185'>Wrong</span>";
+  html+=`<li style='margin-bottom:8px'><div>${a.question}</div><div>Your: ${sel}</div><div>Correct: ${corr}</div><div>${mark}</div></li>`;
+ });
+ html+="</ol>";
+ feedbackEl.innerHTML=html;
+ feedbackEl.classList.remove("hidden");
+ qArea.classList.add("hidden");
+ controls.classList.add("hidden");
+ timerEl.classList.add("hidden");
+}
+
+// --- Security ---
+document.addEventListener("visibilitychange",()=>{if(document.hidden){alert("❌ Tab switched — Auto submitted");autoSubmit("Switched tab");}});
+window.addEventListener("contextmenu",e=>e.preventDefault());
+window.addEventListener("keydown",e=>{if((e.ctrlKey&&["p","s","u","P","S","U"].includes(e.key))||e.key==="F12"||(e.ctrlKey&&e.shiftKey&&e.key==="I")){e.preventDefault();alert("Disabled during exam");}});
+
+// --- Start ---
+renderQuestion(currentIndex);
+startTimer();
+</script>
+</body>
+</html>

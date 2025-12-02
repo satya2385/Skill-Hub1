@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Aptitude Test Hub</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --gold: #d4af37;
+        --blue: #2563eb;
+        --purple: #7e22ce;
+        --bg: #f8fafc;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Poppins", sans-serif;
+        background: #fff;
+        color: #111;
+        padding: 40px 24px;
+      }
+
+      /* H1 STYLING */
+      h1 {
+        font-size: 42px;
+        font-weight: 700;
+        background: linear-gradient(
+          90deg,
+          var(--purple),
+          var(--blue),
+          var(--gold)
+        );
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: float 3s ease-in-out infinite;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+
+      /* FLOAT ANIMATION */
+      @keyframes float {
+        0% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+
+      .chapter-box {
+        background: var(--bg);
+        padding: 30px;
+        border-radius: 20px;
+        margin-top: 20px;
+        border: 1px solid rgba(212, 175, 55, 0.4);
+        box-shadow: 0 4px 20px rgba(37, 99, 235, 0.12);
+      }
+
+      .chapter-box h3 {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--purple);
+        margin-bottom: 14px;
+      }
+
+      .chapter-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
+        font-size: 17px;
+        font-weight: 600;
+        color: #334155;
+      }
+
+      .timing-box {
+        margin-top: 26px;
+        padding: 16px;
+        background: white;
+        border-radius: 16px;
+        border: 1px solid rgba(126, 34, 206, 0.4);
+        box-shadow: 0 3px 14px rgba(126, 34, 206, 0.15);
+      }
+
+      .timing-box h3 {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--blue);
+        margin-bottom: 6px;
+      }
+
+      .term-box {
+        background: var(--bg);
+        padding: 30px;
+        border-radius: 20px;
+        margin-top: 32px;
+        border: 1px solid rgba(126, 34, 206, 0.4);
+        box-shadow: 0 4px 20px rgba(126, 34, 206, 0.12);
+      }
+
+      .term-box h2 {
+        font-size: 30px;
+        font-weight: 700;
+        background: linear-gradient(
+          90deg,
+          var(--blue),
+          var(--purple),
+          var(--gold)
+        );
+        background-clip: text; /* added */
+        -webkit-background-clip: text; /* for Chrome/Safari */
+        -webkit-text-fill-color: transparent;
+        text-align: center; /* optional – remove if not needed */
+        margin-bottom: 12px;
+      }
+
+      ul {
+        font-size: 16px;
+        line-height: 1.7;
+        color: #475569;
+        font-weight: 500;
+      }
+
+      .start-box {
+        text-align: center;
+        margin-top: 40px;
+      }
+
+      .start-btn {
+        padding: 14px 36px;
+        font-size: 20px;
+        font-weight: 700;
+        border: 2px solid var(--gold);
+        border-radius: 14px;
+        background: white;
+        color: var(--gold);
+        box-shadow: 0 0 24px rgba(212, 175, 55, 0.35);
+        animation: btnGlow 2s infinite alternate ease-in-out;
+        cursor: none;
+      }
+      @keyframes btnGlow {
+        from {
+          box-shadow: 0 0 18px rgba(37, 99, 235, 0.2);
+        }
+        to {
+          box-shadow: 0 0 30px rgba(126, 34, 206, 0.4);
+        }
+      }
+      .start-btn:hover {
+        transform: scale(1.06);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Infosys (Infosys SP / DSE / Systems Engineer)</h1>
+
+    <div class="chapter-box">
+      <h3>SE (System Engineer) Pattern</h3>
+      <div class="chapter-list">
+        <div>1. Reasoning Ability</div>
+        <div>2. Mathematical Ability</div>
+        <div>3. Verbal Ability</div>
+        <div>4. Pseudocode</div>
+        <div>5. Written Communication (Essay Writing)</div>
+      </div>
+      <h3>Next Rounds</h3>
+      <div class="chapter-list">
+        <div>Technical Interview</div>
+        <div>HR Interviewt</div>
+      </div>
+    </div>
+
+    <div class="timing-box">
+      <h3>Exam Timing & Rules</h3>
+      <div class="time">Duration: 25 Minutes</div>
+      <div class="time">Total Questions: 25</div>
+      <div
+        class="info"
+        style="font-size: 15px; color: #7e22ce; margin-top: 6px"
+      >
+        ⏱ You must solve 1 question per minute to complete on time.
+      </div>
+    </div>
+
+    <div class="term-box">
+      <h2>Test Terms & Conditions</h2>
+      <ul>
+        <li>No calculator is allowed during the test.</li>
+        <li>The test must be completed within the time limit.</li>
+        <li>Do not refresh or leave the page during the exam.</li>
+        <li>Each question carries 1 mark, no negative marking.</li>
+        <li>Ensure stable internet connection before starting.</li>
+        <li>Follow one-question-per-minute strategy.</li>
+        <li>Mock test pattern is based on real company placement exams.</li>
+        <li>Auto submission happens after timer ends.</li>
+        <li>Maintain discipline and avoid distractions.</li>
+        <li>Your progress helps you improve daily performance.</li>
+      </ul>
+    </div>
+
+    <div class="start-box">
+      <a href="exam/Infosys.html">
+        <button class="start-btn">Start Exam</button>
+      </a>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel | Attendance Reports</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      color: white;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(10px);
+    }
+    .topbar button {
+      background: #ffd166;
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 15px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-left: 5px;
+    }
+    .topbar button:hover {
+      background: #ffe08a;
+    }
+    .danger {
+      background: #ff4d4d !important;
+      color: white !important;
+    }
+    .danger:hover {
+      background: #ff7070 !important;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+    }
+    th, td {
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background: rgba(0,0,0,0.4);
+    }
+    tr:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    .download-btn {
+      background: #00d2ff;
+      border: none;
+      color: #fff;
+      border-radius: 8px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .download-btn:hover {
+      background: #00aaff;
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <h2>📊 Admin Attendance Reports</h2>
+    <div>
+      <button id="downloadAll">⬇️ Download All</button>
+      <button id="clearAll" class="danger">🗑 Clear All Data</button>
+      <button onclick="window.location.href='hall1.html'">⬅ Back</button>
+      <button id="logoutBtn" class="danger">Logout</button>
+    </div>
+  </div>
+
+  <table id="reportTable">
+    <thead>
+      <tr>
+        <th>Hall</th>
+        <th>Date</th>
+        <th>Total Present</th>
+        <th>Total Absent</th>
+        <th>Download</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+    import { getFirestore, getDocs, collection, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+    // 🔥 Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyB9Bb5XCQ4CSARFIn0Nmp_h56vJ0NDkpcU",
+      authDomain: "login-89019.firebaseapp.com",
+      projectId: "login-89019",
+      storageBucket: "login-89019.firebasestorage.app",
+      messagingSenderId: "342909176790",
+      appId: "1:342909176790:web:583d43c716c8205f777277"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const ADMIN_EMAIL = "admin@gmail.com";
+    const tableBody = document.querySelector("#reportTable tbody");
+
+    // 🔐 Authentication Protection
+    onAuthStateChanged(auth, (user) => {
+      if (!user || user.email !== ADMIN_EMAIL) {
+        alert("⛔ Access Denied. Only Admin can view this page.");
+        window.location.href = "admin_login.html";
+      } else {
+        loadReports();
+      }
+    });
+
+    // 📄 Load Reports
+    async function loadReports() {
+      const snapshot = await getDocs(collection(db, "attendanceReports"));
+      let allReports = [];
+      tableBody.innerHTML = "";
+
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        const totalPresent = data.records.filter(r => r.Status === "Present").length;
+        const totalAbsent = data.records.filter(r => r.Status === "Absent").length;
+
+        allReports.push({
+          id: docSnap.id,
+          hall: data.hall,
+          date: data.date,
+          records: data.records,
+          present: totalPresent,
+          absent: totalAbsent
+        });
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${data.hall}</td>
+          <td>${data.date}</td>
+          <td>${totalPresent}</td>
+          <td>${totalAbsent}</td>
+          <td><button class="download-btn" onclick='downloadReport(${JSON.stringify(JSON.stringify(data))})'>⬇️ Excel</button></td>
+        `;
+        tableBody.appendChild(tr);
+      });
+
+      document.getElementById("downloadAll").onclick = () => downloadAllReports(allReports);
+      document.getElementById("clearAll").onclick = () => clearAllReports(allReports);
+    }
+
+    // ⬇ Download Single Report
+    window.downloadReport = function(reportString) {
+      const report = JSON.parse(reportString);
+      const fileName = `${report.hall}_${report.date}.xlsx`;
+      const ws = XLSX.utils.json_to_sheet(report.records);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Attendance");
+      XLSX.writeFile(wb, fileName);
+    };
+
+    // ⬇ Download All Combined Reports
+    function downloadAllReports(allReports) {
+      let combined = [];
+      allReports.forEach(r => {
+        r.records.forEach(rec => {
+          combined.push({
+            Hall: r.hall,
+            Date: r.date,
+            RollNumber: rec.RollNumber,
+            Status: rec.Status
+          });
+        });
+      });
+      const ws = XLSX.utils.json_to_sheet(combined);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "AllAttendance");
+      XLSX.writeFile(wb, "All_Halls_Attendance.xlsx");
+    }
+
+    // 🧹 Clear All Data
+    async function clearAllReports(allReports) {
+      const confirmDelete = confirm("⚠️ Are you sure you want to delete ALL attendance data? This cannot be undone!");
+      if (!confirmDelete) return;
+
+      for (const report of allReports) {
+        await deleteDoc(doc(db, "attendanceReports", report.id));
+      }
+
+      alert("🗑 All attendance data has been cleared successfully!");
+      loadReports(); // reload table
+    }
+
+    // 🚪 Logout
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      signOut(auth).then(() => (window.location.href = "admin_login.html"));
+    });
+  </script>
+</body>
+</html>

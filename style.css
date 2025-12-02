@@ -1,0 +1,147 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+section {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #0e0f1a;
+  overflow: hidden;
+}
+
+.color {
+  position: absolute;
+  filter: blur(150px);
+}
+
+.color:nth-child(1) {
+  background: #ff00c8;
+  width: 600px;
+  height: 600px;
+  top: -150px;
+  left: -150px;
+}
+
+.color:nth-child(2) {
+  background: #00d2ff;
+  width: 500px;
+  height: 500px;
+  bottom: 50px;
+  right: -200px;
+}
+
+.color:nth-child(3) {
+  background: #fffb00;
+  width: 400px;
+  height: 400px;
+  bottom: -100px;
+  left: 100px;
+}
+
+.box {
+  position: relative;
+}
+
+.box .square {
+  position: absolute;
+  backdrop-filter: blur(5px);
+  border-radius: 20px;
+  animation: move 10s linear infinite;
+  animation-delay: calc(-1s * var(--i));
+}
+
+@keyframes move {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(20px) rotate(180deg); }
+}
+
+.container {
+  position: relative;
+  width: 350px;
+  min-height: 400px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 25px 45px rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 1000;
+  backdrop-filter: blur(20px);
+}
+
+.form h2 {
+  color: #fff;
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.inputBox {
+  position: relative;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.inputBox input {
+  width: 100%;
+  padding: 10px 20px;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  outline: none;
+  border-radius: 30px;
+  color: #fff;
+}
+
+.inputBox input::placeholder {
+  color: #ddd;
+}
+
+.inputBox input[type="button"] {
+  background: #ff00c8;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.inputBox input[type="button"]:hover {
+  background: #00d2ff;
+}
+
+.forget, .signup {
+  color: #fff;
+  font-size: 0.9em;
+  margin-top: 10px;
+}
+
+.forget a, .signup a {
+  color: #ff00c8;
+  text-decoration: none;
+}
+
+.forget a:hover, .signup a:hover {
+  text-decoration: underline;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.drop {
+  background: rgba(255,255,255,0.1);
+  padding: 40px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  color: #fff;
+  text-align: center;
+}

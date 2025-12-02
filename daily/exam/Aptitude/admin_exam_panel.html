@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Panel — Exam Results</title>
+  <style>
+    body {
+      font-family: Poppins, sans-serif;
+      background: linear-gradient(135deg,#0f172a,#0f4c81);
+      color: #fff;
+      padding: 24px;
+    }
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .card {
+      background: rgba(255,255,255,0.05);
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+    th, td {
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background: rgba(255,255,255,0.08);
+    }
+    .btn {
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-primary { background: #06b6d4; color: #001219; }
+    .btn-danger { background: #ef4444; color: #fff; }
+    .btn-warning { background: #f59e0b; color: #000; }
+    .logout { background: #ef4444; color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="top">
+    <h2>Admin — Exam Results</h2>
+    <div>
+      <button id="downloadAll" class="btn btn-primary">⬇️ Download All</button>
+      <button id="clearAll" class="btn btn-warning">⚠️ Clear All</button>
+      <button id="logoutBtn" class="btn logout">Logout</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <table id="resultsTable">
+      <thead>
+        <tr>
+          <th>Date/Time</th>
+          <th>Test ID</th>
+          <th>Student Roll</th>
+          <th>Score</th>
+          <th>Correct</th>
+          <th>Wrong</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+    // 🔧 Firebase Config
+    const firebaseConfig = {
+      apiKey:"AIzaSyB9Bb5XCQ4CSARFIn0Nmp_h56vJ0NDkpcU",
+      authDomain:"login-89019.firebaseapp.com",
+      projectId:"login-89019",
+      storageBucket:"login-89019.firebasestorage.app",
+      messagingSenderId:"342909176790",
+      appId:"1:342909176790:web:583d43c716c8205f777277"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const ADMIN_EMAIL = "admin@gmail.com";
+
+    const tbody = document.querySelector('#resultsTable tbody');
+
+    // 🔐 Allow only admin
+    onAuthStateChanged(auth, async user => {
+      if (!user || user.email !== ADMIN_EMAIL) {
+        alert("Access denied! Only admin allowed.");
+        location.href = "admin_login.html";
+        return;
+      }
+      await loadResults();
+    });
+
+    // 📊 Load Results
+    async function loadResults() {
+      tbody.innerHTML = "";
+      const q = query(collection(db, "examResults"), orderBy("timestamp", "desc"));
+      const snap = await getDocs(q);
+      const results = [];
+
+      snap.forEach(docSnap => {
+        const d = docSnap.data();
+        const correct = d.correctCount || 0;
+        const wrong = (d.totalQuestions || 0) - correct;
+        results.push({
+          id: docSnap.id,
+          date: d.dateString || "",
+          testId: d.testId || "",
+          roll: d.studentEmail || "unknown",
+          score: d.score || 0,
+          correct,
+          wrong
+        });
+      });
+
+      // 🧱 Populate Table
+      results.forEach(r => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${r.date}</td>
+          <td>${r.testId}</td>
+          <td>${r.roll}</td>
+          <td>${r.score}%</td>
+          <td>${r.correct}</td>
+          <td>${r.wrong}</td>
+          <td>
+            <button class="btn btn-danger" data-id="${r.id}">🗑 Clear</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // 🗑 Individual Clear
+      tbody.querySelectorAll('.btn-danger').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (confirm("Delete this student's result?")) {
+            await deleteDoc(doc(db, "examResults", btn.dataset.id));
+            alert("Deleted successfully!");
+            loadResults();
+          }
+        });
+      });
+
+      // 📥 Download All
+      document.getElementById("downloadAll").onclick = () => downloadAllExcel(results);
+
+      // ⚠️ Clear All
+      document.getElementById("clearAll").onclick = async () => {
+        const confirmClear = confirm("⚠️ Delete ALL results permanently?");
+        if (!confirmClear) return;
+        for (const r of results) {
+          await deleteDoc(doc(db, "examResults", r.id));
+        }
+        alert("✅ All results cleared!");
+        loadResults();
+      };
+
+      // 🚪 Logout
+      document.getElementById("logoutBtn").onclick = () => {
+        signOut(auth).then(() => (location.href = "admin_login.html"));
+      };
+    }
+
+    // 📊 Excel Export
+    function downloadAllExcel(results) {
+      const wsData = results.map(r => ({
+        "Date/Time": r.date,
+        "Test ID": r.testId,
+        "Student Roll": r.roll,
+        "Score (%)": r.score,
+        "Correct": r.correct,
+        "Wrong": r.wrong
+      }));
+      const ws = XLSX.utils.json_to_sheet(wsData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Exam_Results");
+      XLSX.writeFile(wb, "Exam_Results_Summary.xlsx");
+    }
+  </script>
+</body>
+</html>

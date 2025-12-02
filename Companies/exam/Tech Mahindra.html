@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Exam with Circle Timer</title>
+    <style>
+      :root {
+        --blue: #2563eb;
+        --purple: #7e22ce;
+        --gold: #d4af37;
+        --bg: #ffffff;
+      }
+      body {
+        margin: 0;
+        font-family: Poppins, sans-serif;
+        background: var(--bg);
+        color: #111;
+      }
+
+      /* Top question numbers */
+      .top-panel {
+        background: #fff;
+        padding: 14px;
+        border-bottom: 2px solid rgba(37, 99, 235, 0.3);
+        text-align: center;
+        overflow-x: auto;
+      }
+      #qNumbersTop {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .q-top {
+        padding: 8px 16px;
+        border-radius: 10px;
+        background: #fff;
+        font-weight: 700;
+        font-size: 16px;
+        border: 2px solid var(--purple);
+        color: var(--purple);
+        box-shadow: 0 2px 8px rgba(126, 34, 206, 0.15);
+        opacity: 0.75;
+        animation: qTopAnim 1.2s ease forwards;
+      }
+      @keyframes qTopAnim {
+        from {
+          opacity: 0;
+          transform: translateY(-14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .q-top-active {
+        background: var(--purple);
+        color: #fff;
+        opacity: 1;
+      }
+
+      /* Layout */
+      main {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        padding: 40px;
+        height: 85vh;
+      }
+      .center-panel {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .exam-box {
+        width: 90%;
+        max-width: 650px;
+        padding: 30px;
+        border-radius: 16px;
+        border: 2px solid rgba(126, 34, 206, 0.3);
+        box-shadow: 0 5px 20px rgba(126, 34, 206, 0.2);
+        background: #fafafa;
+      }
+      .question-box {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--blue);
+      }
+      .options-box {
+        margin-top: 25px;
+      }
+      .options-box button {
+        display: block;
+        width: 100%;
+        text-align: left;
+        margin: 12px 0;
+        padding: 12px 18px;
+        font-size: 18px;
+        border: 2px solid rgba(37, 99, 235, 0.3);
+        border-radius: 12px;
+        background: #fff;
+        color: #111;
+        transition: 0.3s;
+        cursor: pointer;
+      }
+      .options-box button:hover {
+        border-color: var(--blue);
+        box-shadow: 0 0 14px rgba(37, 99, 235, 0.4);
+      }
+      .option-selected {
+        background: var(--blue) !important;
+        color: white !important;
+      }
+
+      /* Timer */
+      .right-panel {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .timer-wrapper {
+        position: relative;
+        width: 180px;
+        height: 180px;
+        margin-bottom: 12px;
+      }
+      .circle-timer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 32px;
+        font-weight: 800;
+        color: var(--purple);
+        background: #fff;
+        box-shadow: 0 0 22px rgba(126, 34, 206, 0.5);
+        z-index: 2;
+      }
+      .circle-progress {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: conic-gradient(
+          var(--purple) 0deg,
+          rgba(126, 34, 206, 0.2) 0deg 360deg
+        );
+        z-index: 1;
+        transition: background 1s linear;
+      }
+      .flash {
+        animation: flashAnim 0.6s infinite alternate;
+      }
+      @keyframes flashAnim {
+        0% {
+          box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
+        }
+        50% {
+          box-shadow: 0 0 22px rgba(255, 0, 0, 0.3);
+        }
+        100% {
+          box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
+        }
+      }
+      .timer-label {
+        font-size: 15px;
+        font-weight: 600;
+        color: #555;
+        margin-top: 8px;
+      }
+
+      /* Buttons */
+      .action-buttons {
+        display: flex;
+        gap: 18px;
+        justify-content: center;
+        margin-top: 30px;
+      }
+      .action-buttons button {
+        padding: 12px 28px;
+        font-size: 18px;
+        font-weight: 600;
+        border-radius: 12px;
+        border: 2px solid var(--gold);
+        background: #fff;
+        color: var(--blue);
+        box-shadow: 0 3px 12px rgba(37, 99, 235, 0.25);
+        transition: 0.3s;
+        cursor: pointer;
+      }
+      .action-buttons button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 20px rgba(37, 99, 235, 0.5);
+      }
+      #submitBtn {
+        border-color: var(--purple);
+        color: var(--purple);
+      }
+      #submitBtn:hover {
+        box-shadow: 0 4px 20px rgba(126, 34, 206, 0.5);
+      }
+
+      /* Submit message */
+      .submit-message {
+        text-align: center;
+        padding: 60px 20px;
+      }
+
+      /* Gradient Title */
+      .submit-message h1 {
+        font-size: 38px;
+        font-weight: 700;
+        background: linear-gradient(
+          90deg,
+          var(--gold),
+          var(--purple),
+          var(--blue)
+        );
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 12px;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      /* Description Text */
+      .submit-message p {
+        font-size: 18px;
+        opacity: 0.8;
+        margin-top: 10px;
+        color: #475569;
+      }
+
+      /* Button */
+      .submit-message button {
+        padding: 12px 28px;
+        font-size: 18px;
+        border-radius: 12px;
+        border: 2px solid var(--purple);
+        background: #ffffff;
+        color: var(--purple);
+        margin-top: 28px;
+        cursor: pointer;
+        transition: 0.3s ease;
+        font-weight: 600;
+      }
+
+      /* Hover Effect */
+      .submit-message button:hover {
+        transform: scale(1.06);
+        box-shadow: 0 0 18px rgba(126, 34, 206, 0.4);
+      }
+
+      /* Floating animation (same style as your main H1) */
+      @keyframes float {
+        0% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-8px);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+
+      /* Review cards */
+      .review-container {
+        padding: 40px 30px;
+      }
+      .review-card {
+        background: #fafafa;
+        padding: 18px 22px;
+        margin: 14px auto;
+        width: 90%;
+        max-width: 750px;
+        border-radius: 14px;
+        border: 2px solid rgba(126, 34, 206, 0.25);
+        box-shadow: 0 4px 14px rgba(126, 34, 206, 0.15);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .review-card .qtxt {
+        width: 100%;
+        font-size: 18px;
+        font-weight: 600;
+        color: #111;
+        margin-bottom: 10px;
+      }
+      .review-card .ans {
+        font-size: 16px;
+        font-weight: 700;
+      }
+      .correct {
+        color: green;
+      }
+      .wrong {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-panel"><div id="qNumbersTop"></div></div>
+
+    <main id="examUI">
+      <div class="center-panel">
+        <div class="exam-box">
+          <div class="question-box" id="question"></div>
+          <div class="options-box" id="options"></div>
+          <div class="action-buttons">
+            <button id="nextBtn">Next</button>
+            <button id="submitBtn">Submit</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <div class="timer-wrapper">
+          <div class="circle-timer" id="circleTimer">25:00</div>
+          <div class="circle-progress" id="circleProgress"></div>
+        </div>
+        <div class="timer-label">TIME REMAINING</div>
+      </div>
+    </main>
+
+    <script>
+      // Sample Questions
+      const questions = [
+        { q: "5,10,20,40,?", options: ["50", "60", "80", "90"], answer: "80" },
+        { q: "20% of 250?", options: ["45", "50", "55", "60"], answer: "50" },
+        { q: "15 + 5 × 2?", options: ["30", "25", "20", "35"], answer: "25" },
+        {
+          q: "310 ÷ 10 × 5?",
+          options: ["155", "150", "160", "165"],
+          answer: "155",
+        },
+        {
+          q: "Next prime after 29?",
+          options: ["31", "33", "37", "35"],
+          answer: "31",
+        },
+        {
+          q: "If a:b = 3:4, and b = 12, find a?",
+          options: ["9", "8", "6", "10"],
+          answer: "9",
+        },
+        {
+          q: "What is 15% of 200?",
+          options: ["25", "30", "35", "40"],
+          answer: "30",
+        },
+        {
+          q: "Simplify: 12 × (5 + 3)",
+          options: ["96", "100", "90", "110"],
+          answer: "96",
+        },
+        {
+          q: "If 5 pencils cost $10, cost of 8 pencils?",
+          options: ["16", "15", "18", "20"],
+          answer: "16",
+        },
+        {
+          q: "Average of 5,10,15,20?",
+          options: ["10", "12.5", "15", "17.5"],
+          answer: "12.5",
+        },
+        {
+          q: "Profit if cost = $200, selling = $250?",
+          options: ["$40", "$50", "$60", "$70"],
+          answer: "50",
+        },
+        {
+          q: "Loss if cost = $500, selling = $450?",
+          options: ["$40", "$45", "$50", "$55"],
+          answer: "50",
+        },
+        {
+          q: "Ratio of 12:16 in simplest form?",
+          options: ["3:4", "4:5", "2:3", "6:8"],
+          answer: "3:4",
+        },
+        {
+          q: "Find 25% of 320?",
+          options: ["70", "75", "80", "85"],
+          answer: "80",
+        },
+        {
+          q: "Simplify: 50 ÷ 5 + 6 × 2",
+          options: ["22", "20", "24", "26"],
+          answer: "22",
+        },
+        {
+          q: "Next number in series 2,4,8,16,?",
+          options: ["18", "20", "32", "34"],
+          answer: "32",
+        },
+        {
+          q: "If x+y=10 and x-y=2, find x?",
+          options: ["6", "5", "4", "8"],
+          answer: "6",
+        },
+        {
+          q: "Percentage of 75 out of 300?",
+          options: ["15%", "20%", "25%", "30%"],
+          answer: "25%",
+        },
+        {
+          q: "What is 7 × 8 - 10?",
+          options: ["46", "48", "50", "52"],
+          answer: "46",
+        },
+        {
+          q: "Simplify: 100 ÷ (5+5)",
+          options: ["8", "10", "12", "15"],
+          answer: "10",
+        },
+        {
+          q: "Find the missing: 3,9,27,?",
+          options: ["54", "81", "72", "90"],
+          answer: "81",
+        },
+        {
+          q: "If 8 pens cost $12, cost of 5 pens?",
+          options: ["6", "7.5", "8", "8.5"],
+          answer: "7.5",
+        },
+        {
+          q: "Average of 10,20,30,40?",
+          options: ["20", "25", "30", "35"],
+          answer: "25",
+        },
+        {
+          q: "Profit % if cost = $400, selling = $500?",
+          options: ["20%", "25%", "30%", "15%"],
+          answer: "25%",
+        },
+        {
+          q: "Next prime after 41?",
+          options: ["43", "45", "47", "49"],
+          answer: "43",
+        },
+        {
+          q: "Simplify: (12 + 8) ÷ 4",
+          options: ["4", "5", "6", "7"],
+          answer: "5",
+        },
+      ];
+
+      let index = 0,
+        chosen = Array(questions.length).fill(null);
+
+      // Top numbers
+      const qTopBox = document.getElementById("qNumbersTop");
+      questions.forEach((_, i) => {
+        const d = document.createElement("div");
+        d.className = "q-top";
+        d.innerText = i + 1;
+        qTopBox.appendChild(d);
+      });
+      function setActiveQ() {
+        document.querySelectorAll(".q-top").forEach((n, i) => {
+          n.classList.toggle("q-top-active", i === index);
+        });
+      }
+
+      // Render question
+      function renderQuestion() {
+        setActiveQ();
+        document.getElementById("question").innerText = `Q${index + 1}: ${
+          questions[index].q
+        }`;
+        const optBox = document.getElementById("options");
+        optBox.innerHTML = "";
+        questions[index].options.forEach((op) => {
+          const b = document.createElement("button");
+          b.innerText = op;
+          if (chosen[index] === op) b.classList.add("option-selected");
+          b.onclick = () => {
+            chosen[index] = op;
+            document
+              .querySelectorAll("#options button")
+              .forEach((x) => x.classList.remove("option-selected"));
+            b.classList.add("option-selected");
+          };
+          optBox.appendChild(b);
+        });
+        document.getElementById("nextBtn").style.display =
+          index === questions.length - 1 ? "none" : "inline-block";
+      }
+      renderQuestion();
+
+      // Buttons
+      document.getElementById("nextBtn").onclick = () => {
+        if (index < questions.length - 1) {
+          index++;
+          renderQuestion();
+        }
+      };
+      document.getElementById("submitBtn").onclick = submitExam;
+
+      // Circle timer
+      let totalTime = 25 * 60;
+      const timerDisplay = document.getElementById("circleTimer");
+      const circleProgress = document.getElementById("circleProgress");
+
+      const timerInterval = setInterval(() => {
+        let minutes = Math.floor(totalTime / 60);
+        let seconds = totalTime % 60;
+        timerDisplay.innerText = `${minutes}:${String(seconds).padStart(
+          2,
+          "0"
+        )}`;
+        let deg = 360 * (1 - totalTime / (25 * 60));
+        circleProgress.style.background = `conic-gradient(var(--purple) 0deg ${deg}deg, rgba(126,34,206,0.2) ${deg}deg 360deg)`;
+        if (totalTime <= 60) timerDisplay.classList.add("flash");
+        totalTime--;
+        if (totalTime < 0) {
+          clearInterval(timerInterval);
+          submitExam();
+        }
+      }, 1000);
+
+      // Auto-submit if tab hidden
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) submitExam();
+      });
+
+      // Submit
+      function submitExam() {
+        document.body.innerHTML = `<div class="submit-message">
+    <h1>✅ Thank You for Submitting!</h1>
+    <p>Your exam is successfully saved.</p>
+    <button id="review">Review Answers</button>
+  </div>`;
+        setTimeout(
+          () => (document.getElementById("review").onclick = reviewAnswers),
+          200
+        );
+      }
+
+      // Review
+      function reviewAnswers() {
+        document.body.innerHTML = `<div class="review-container"><h2>Exam Review</h2></div>`;
+        const container = document.querySelector(".review-container");
+        questions.forEach((qt, i) => {
+          const rc = document.createElement("div");
+          rc.className = "review-card";
+          rc.innerHTML = `<div class="qtxt">${i + 1}. ${qt.q}</div>
+      <div class="ans">Your Answer: <span class="${
+        chosen[i] === qt.answer ? "correct" : "wrong"
+      }">${chosen[i] ?? "Not answered"}</span></div>
+      <div class="ans">Correct Answer: <span class="correct">${
+        qt.answer
+      }</span></div>`;
+          container.appendChild(rc);
+        });
+      }
+    </script>
+  </body>
+</html>

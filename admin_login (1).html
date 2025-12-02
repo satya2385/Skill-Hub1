@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+    .login-box {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(12px);
+      width: 320px;
+      text-align: center;
+    }
+    .login-box h2 { margin-bottom: 20px; }
+    .login-box input {
+      width: 100%; padding: 10px; margin: 10px 0;
+      border: none; border-radius: 25px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+    .login-box input::placeholder { color: #ddd; }
+    .login-box button {
+      background: #00d2ff; border: none; padding: 10px 20px;
+      border-radius: 25px; color: white; cursor: pointer;
+      font-weight: 600; margin-top: 10px; width: 100%;
+    }
+    .login-box button:hover { background: #00aaff; }
+    .msg { margin-top: 15px; font-size: 0.9rem; color: #c6ffb2; }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>Admin Login</h2>
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <button id="loginBtn">Login</button>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB9Bb5XCQ4CSARFIn0Nmp_h56vJ0NDkpcU",
+      authDomain: "login-89019.firebaseapp.com",
+      projectId: "login-89019",
+      storageBucket: "login-89019.firebasestorage.app",
+      messagingSenderId: "342909176790",
+      appId: "1:342909176790:web:583d43c716c8205f777277"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document.getElementById("loginBtn").addEventListener("click", () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const msg = document.getElementById("msg");
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          if (user.email === "admin@gmail.com") {
+            msg.textContent = "✅ Login successful! Redirecting...";
+            setTimeout(() => {
+              window.location.href = "hall1.html";
+            }, 1000);
+          } else {
+            msg.textContent = "⛔ Unauthorized user.";
+          }
+        })
+        .catch((error) => {
+          msg.textContent = "❌ " + error.message;
+        });
+    });
+  </script>
+</body>
+</html>

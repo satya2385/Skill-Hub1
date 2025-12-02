@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Skill Test & Mock Test Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #D4AF37;
+  --blue: #2563eb;
+  --purple: #7e22ce;
+  --light: #f8fafc;
+}
+
+body {
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:#fff;
+  color:#111;
+  overflow-x:hidden;
+}
+
+
+@keyframes clockPulse {
+  0%,100%{ transform:scale(1); opacity:0.8;}
+  50%{ transform:scale(1.18); opacity:1;}
+}
+
+/* HERO SECTION */
+.hero {
+  height:92vh;
+  display:grid;
+  grid-template-columns:1.2fr 0.8fr;
+  padding:80px 60px 40px;
+  align-items:center;
+  background:var(--light);
+  position:relative;
+}
+
+.hero-text h1 {
+  font-size: 56px;
+  background: linear-gradient(90deg, var(--purple), var(--blue), var(--gold));
+
+  /* Fix: Add standard + WebKit versions */
+  background-clip: text;
+  -webkit-background-clip: text;
+
+  /* Required for transparent text */
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+
+  animation: heroFloat 3s infinite ease-in-out;
+  margin-bottom: 18px;
+  display: inline-block; /* Ensures clipping works perfectly */
+}
+
+@keyframes heroFloat {
+  0%,100%{ transform:translateY(0);}
+  50%{ transform:translateY(-10px);}
+}
+
+.hero-text p {
+  font-size:20px;
+  color:#334155;
+  line-height:1.5;
+  margin-bottom:12px;
+}
+
+.hero-text .tagline {
+  font-size:22px;
+  font-weight:600;
+  color:var(--blue);
+  margin-top:10px;
+  animation: fadeSlide 1.6s ease forwards;
+}
+
+@keyframes fadeSlide {
+  0%{opacity:0;transform:translateY(20px);}
+  100%{opacity:1;transform:translateY(0);}
+}
+
+.btn {
+  padding:12px 28px;
+  font-size:17px;
+  border:2px solid var(--gold);
+  border-radius:12px;
+  background:#fff;
+  color:var(--gold);
+  box-shadow:0 0 22px rgba(212,175,55,0.35);
+  pointer-events:none;
+  transition:0.3s;
+}
+.btn:hover { transform:scale(1.07); }
+
+/* HERO CLOCK DISPLAY */
+.hero-clock {
+  font-size: 96px;
+  font-weight: 700;
+  text-align: center;
+  background: linear-gradient(45deg, var(--blue), var(--purple), var(--gold));
+  background-clip: text;            /* Standard property */
+  -webkit-background-clip: text;    /* Chrome / Safari */
+  -webkit-text-fill-color: transparent;
+  color: transparent;               /* Extra safety for some browsers */
+  display: inline-block;            /* Ensures proper clipping */
+  animation: timerGlow 2.5s infinite alternate ease-in-out;
+}
+
+@keyframes timerGlow {
+  from{opacity:0.6;transform:scale(0.9);}
+  to{opacity:1;transform:scale(1);}
+}
+
+/* DAILY TESTS SECTION */
+.daily-tests {
+  padding:70px 30px;
+  text-align:center;
+  background:#fff;
+}
+
+h2.section-title {
+  font-size: 36px;
+  background: linear-gradient(90deg, var(--blue), var(--purple), var(--gold));
+  background-clip: text;            /* Standard */
+  -webkit-background-clip: text;    /* Chrome/Safari */
+  -webkit-text-fill-color: transparent;
+  color: transparent;               /* Fix for some browsers */
+  display: inline-block;            /* Required for stable gradient-text */
+  margin-bottom: 14px;
+  animation: titleReveal 1.8s ease forwards;
+}
+
+@keyframes titleReveal {
+  0%{opacity:0;transform:translateY(22px);}
+  100%{opacity:1;transform:translateY(0);}
+}
+
+.test-grid {
+  display:grid;
+  gap:28px;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  margin-top:42px;
+}
+
+.test-card {
+  background:#fff;
+  padding:28px;
+  border-radius:20px;
+  border:1px solid rgba(212,175,55,0.4);
+  box-shadow:0 5px 20px rgba(37,99,235,0.1);
+  animation: cardUp 1.6s ease forwards;
+  transition:0.3s;
+}
+@keyframes cardUp {
+  0%{opacity:0;transform:translateY(26px);}
+  100%{opacity:1;transform:translateY(0);}
+}
+.test-card:hover {
+  transform:scale(1.05);
+  box-shadow:0 8px 28px rgba(126,34,206,0.25);
+}
+
+.test-card h3 {
+  font-size:22px;
+  font-weight:600;
+  color:var(--purple);
+  margin-bottom:8px;
+}
+
+.test-card .info {
+  font-size:16px;
+  font-weight:500;
+  margin-top:10px;
+  opacity:0.75;
+  color:#475569;
+}
+
+.test-card .time {
+  font-size:18px;
+  font-weight:700;
+  color:var(--blue);
+  margin-top:6px;
+}
+
+/* COMPANY SECTION */
+.company-tests {
+  padding:60px 30px;
+  text-align:center;
+  background:var(--light);
+}
+.comp-card {
+  background:#fff;
+  padding:20px;
+  border-radius:16px;
+  border:1px solid rgba(212,175,55,0.5);
+  box-shadow:0 4px 16px rgba(126,34,206,0.12);
+  animation:compUp 1.6s ease forwards;
+  transition:0.3s;
+  pointer-events:none;
+}
+@keyframes compUp {
+  0%{opacity:0;transform:translateY(24px);}
+  100%{opacity:1;transform:translateY(0);}
+}
+.comp-card:hover {
+  transform: scale(1.06);
+  box-shadow:0 6px 22px rgba(37,99,235,0.2);
+}
+
+.comp-card h4 {
+  font-size: 20px;
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--blue), var(--purple), var(--gold));
+  background-clip: text;          /* Remove VS Code warning */
+  -webkit-background-clip: text;  /* Required for Chrome/Safari */
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;text-align:center;padding:50px 24px;}
+  .hero-clock{font-size:68px;margin-top:42px;}
+  .hero-text h1{font-size:38px;}
+}
+
+/* BUTTON GROUP BELOW CLOCK */
+.top-buttons {
+  position: fixed;
+  top: 65px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 14px;
+  z-index: 999;
+}
+
+/* LOGIN BUTTON */
+.btn-login {
+  padding: 8px 18px;
+  background: var(--purple);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+/* RIGHT SIDE CIRCLE BUTTONS */
+.right-circle-buttons {
+  position: fixed;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 999;
+}
+
+.circle-btn {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-size: 24px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* Login Circle */
+.login-circle {
+  background: var(--purple);
+}
+
+/* WhatsApp Circle */
+.whatsapp-circle {
+  background: #25D366;
+}
+
+/* Hover Effect */
+.circle-btn:hover {
+  transform: scale(1.1);
+  opacity: 0.9;
+}
+</style>
+<style>
+.logout-btn {
+  background: #e11d48;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.logout-btn:hover {
+  background: #be123c;
+}
+</style>
+
+</head>
+<body>
+<!-- <section class="hero">
+  <div class="hero-text">
+    <h1>Placement Skill & Mock Test Hub</h1>
+    <p class="tagline">Learn. Practice. Perform. Get Placed.</p>
+    <p>
+      The most trusted learning and practice platform for students preparing for company entry tests and campus placements.
+      Build accuracy, confidence, and speed through daily timed tests and real company mock test patterns.
+    </p>
+    <p style="font-size:17px;opacity:0.7;color:#7e22ce;margin-top:8px;">
+      100% College Focused • Real Company Patterns • No Distractions • Results Oriented
+    </p>
+    <p style="font-size:15px;opacity:0.6;color:#475569;margin-top:12px;">
+      ⏱ Timed Practice & Strategy  |  🏆 Self-Challenge  |  🎯 Faster Placement Success
+    </p>
+  </div>
+</section> -->
+<div id="topUserBar" 
+     style="width:100%;padding:12px 20px;background:#7e22ce;color:white;
+            font-size:18px;font-weight:600;position:fixed;top:0;left:0;
+            z-index:1000;display:flex;justify-content:space-between;
+            align-items:center;box-shadow:0 3px 10px rgba(0,0,0,0.25);">
+
+  <span id="userText">Please Login</span>
+
+  <button id="loginBtn"
+          style="background:#2563eb;border:none;color:white;padding:6px 16px;
+                 border-radius:6px;font-weight:600;cursor:pointer;">
+    Login
+  </button>
+</div>
+
+<script>
+document.getElementById("loginBtn").addEventListener("click", () => {
+  window.location.href = "index.html"; // Go to main page after login
+});
+</script>
+
+
+<section class="daily-tests">
+  <div class="hero-text">
+    <h1>Placement Skill & Mock Test Hub</h1>
+    <p class="tagline">Learn. Practice. Perform. Get Placed.</p>
+    <p>
+      The most trusted learning and practice platform for students preparing for company entry tests and campus placements.
+      Build accuracy, confidence, and speed through daily timed tests and real company mock test patterns.
+    </p>
+    <p style="font-size:17px;opacity:0.7;color:#7e22ce;margin-top:8px;">
+      100% College Focused • Real Company Patterns • No Distractions • Results Oriented
+    </p>
+    <p style="font-size:15px;opacity:0.6;color:#475569;margin-top:12px;">
+      ⏱ Timed Practice & Strategy  |  🏆 Self-Challenge  |  🎯 Faster Placement Success
+    </p>
+  </div>
+  <h2 class="section-title">Daily Timed Placement Skill Tests</h2>
+  <p style="font-size:18px;opacity:0.6;color:#475569;">Follow real time limits and question patterns</p>
+
+  <div class="test-grid">
+    <div class="test-card">
+      <h3>Aptitude Daily Task</h3>
+      <div class="time">25 Questions</div>
+      <div class="info">Solve within</div>
+      <div class="time">25 Minutes</div>
+      <div class="info">⏱ 1 Question per minute strategy</div>
+      <a href="daily/Aptitude.html"><button class="btn" style="margin-top:18px;">Start Now</button></a>
+    </div>
+
+    <div class="test-card">
+      <h3>Logical Reasoning Task</h3>
+      <div class="time">25 Questions</div>
+      <div class="info">Solve within</div>
+      <div class="time">25 Minutes</div>
+      <div class="info">🧠 Improve logic + decision making</div>
+      <a href="daily/Reasoning.html"><button class="btn" style="margin-top:18px;">Start Now</button></a>
+    </div>
+
+    <div class="test-card">
+      <h3>English Communication</h3>
+      <div class="time">20 Questions</div>
+      <div class="info">Solve within</div>
+      <div class="time">20 Minutes</div>
+      <div class="info">✍ Accuracy in grammar & comprehension</div>
+      <a href="daily/English.html"><button class="btn" style="margin-top:18px;">Start Now</button></a>
+    </div>
+
+    <div class="test-card">
+      <h3>Interview Prep Questions</h3>
+      <div class="time">15 Questions</div>
+      <div class="info">Solve within</div>
+      <div class="time">20 Minutes</div>
+      <div class="info">🎯 Prepare answers before interviews</div>
+      <a href="daily/Interview.html"><button class="btn" style="margin-top:18px;">Start Now</button></a>
+    </div>
+  </div>
+</section>
+
+<section class="company-tests">
+  <h2 class="section-title">Company Entry Mock Tests</h2>
+  <p style="font-size:18px;opacity:0.7;color:#475569;">Latest patterns based on real company exams</p>
+  <div class="comp-grid">
+  <div class="test-grid">
+    <div class="test-card">
+      <h3>TCS (National Qualifier Test – NQT)</h3>
+      <div class="time">25 Questions</div>
+      <div class="info">Solve within</div>
+      <div class="time">25 Minutes</div>
+      <div class="info">⏱ 1 Question per minute strategy</div>
+      <a href="Companies/TCS.html"><button class="btn" style="margin-top:18px;">Start</button></a>
+    </div>
+    <div class="test-card">
+      <h3>Infosys (Infosys SP / DSE / Systems Engineer)</h3>
+      <div class="time">25 Questions</div>
+      <div class="info">Solve within</div>
+      <div class="time">25 Minutes</div>
+      <div class="info">⏱ 1 Question per minute strategy</div>
+      <a href="Companies/Infosys.html"><button class="btn" style="margin-top:18px;">Start</button></a>
+    </div>
+    <div class="test-card">
+      <h3>Wipro (Elite / NLTH)</h3>
+      <div class="time">25 Questions</div>
+      <div class="info">Solve within</div>
+      <div class="time">25 Minutes</div>
+      <div class="info">⏱ 1 Question per minute strategy</div>
+      <a href="Companies/Wipro.html"><button class="btn" style="margin-top:18px;">Start</button></a>
+    </div>
+    <div class="test-card">
+      <h3>Cognizant (GenC / GenC Pro)</h3>
+      <div class="time">25 Questions</div>
+      <div class="info">Solve within</div>
+      <div class="time">25 Minutes</div>
+      <div class="info">⏱ 1 Question per minute strategy</div>
+      <a href="Companies/Cognizant.html"><button class="btn" style="margin-top:18px;">Start</button></a>
+    </div>
+    <div class="test-card">
+      <h3>Accenture (ASE / SE)</h3>
+      <div class="time">25 Questions</div>
+      <div class="info">Solve within</div>
+      <div class="time">25 Minutes</div>
+      <div class="info">⏱ 1 Question per minute strategy</div>
+      <a href="Companies/Accenture.html"><button class="btn" style="margin-top:18px;">Start</button></a>
+    </div>
+    <div class="test-card">
+      <h3>Capgemini (Latest Pattern)</h3>
+      <div class="time">25 Questions</div>
+      <div class="info">Solve within</div>
+      <div class="time">25 Minutes</div>
+      <div class="info">⏱ 1 Question per minute strategy</div>
+      <a href="Companies/Capgemini.html"><button class="btn" style="margin-top:18px;">Start</button></a>
+    </div>
+    <div class="test-card">
+      <h3>HCL Technologies</h3>
+      <div class="time">25 Questions</div>
+      <div class="info">Solve within</div>
+      <div class="time">25 Minutes</div>
+      <div class="info">⏱ 1 Question per minute strategy</div>
+      <a href="Companies/HCL.html"><button class="btn" style="margin-top:18px;">Start</button></a>
+    </div>
+    <div class="test-card">
+      <h3>Tech Mahindra</h3>
+      <div class="time">25 Questions</div>
+      <div class="info">Solve within</div>
+      <div class="time">25 Minutes</div>
+      <div class="info">⏱ 1 Question per minute strategy</div>
+      <a href="Companies/Tech Mahindra.html"><button class="btn" style="margin-top:18px;">Start</button></a>
+    </div>
+    <div class="test-card">
+      <h3>IBM</h3>
+      <div class="time">25 Questions</div>
+      <div class="info">Solve within</div>
+      <div class="time">25 Minutes</div>
+      <div class="info">⏱ 1 Question per minute strategy</div>
+      <a href="Companies/IBM.html"><button class="btn" style="margin-top:18px;">Start</button></a>
+    </div>
+    <div class="test-card">
+      <h3>Oracle / SAP / Product Companies</h3>
+      <div class="time">25 Questions</div>
+      <div class="info">Solve within</div>
+      <div class="time">25 Minutes</div>
+      <div class="info">⏱ 1 Question per minute strategy</div>
+      <a href="Companies/Oracle.html"><button class="btn" style="margin-top:18px;">Start</button></a>
+    </div>
+    </div>
+    
+</section>
+<div class="right-circle-buttons">
+  <a href="login.html" class="circle-btn login-circle">🔑</a>
+  <a href="https://wa.me/919441982385" target="_blank" class="circle-btn whatsapp-circle">💬</a>
+</div>
+<script>
+// LIVE TOP CLOCK
+setInterval(()=>{
+  const d=new Date();
+  const t=d.toLocaleTimeString().slice(0,5);
+  document.getElementById("clock").innerText=t;
+},1000);
+
+// HERO COUNTDOWN (visual only, no click)
+let heroMin=25, heroSec=0;
+setInterval(()=>{
+  if(heroMin===0 && heroSec===0) return;
+  if(heroSec===0){heroMin--;heroSec=59;}else heroSec--;
+  document.getElementById("heroTimer").innerText=
+    String(heroMin).padStart(2,'0')+":"+String(heroSec).padStart(2,'0');
+},1000);
+
+</script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } 
+  from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB9Bb5XCQ4CSARFIn0Nmp_h56vJ0NDkpcU",
+  authDomain: "login-89019.firebaseapp.com",
+  projectId: "login-89019",
+  storageBucket: "login-89019.firebasestorage.app",
+  messagingSenderId: "342909176790",
+  appId: "1:342909176790:web:583d43c716c8205f777277"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const bar = document.getElementById("topUserBar");
+const userText = document.getElementById("userText");
+const logoutBtn = document.getElementById("logoutBtn");
+
+// Listen for login/logout
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // USER LOGGED IN → SHOW LOGOUT BUTTON AND NAME
+    let name = user.displayName || user.email;
+
+    if (user.email === "admin@gmail.com") {
+      userText.innerHTML = `🛠️ Admin Panel — Logged in as <b>${user.email}</b>`;
+    } else {
+      userText.innerHTML = `👤 Welcome, <b>${name}</b>`;
+    }
+
+    logoutBtn.innerText = "Logout";
+    logoutBtn.style.background = "#ef4444";
+    bar.style.display = "flex";
+  } else {
+    // USER LOGGED OUT → SHOW LOGIN BUTTON
+    userText.innerHTML = `You are not logged in`;
+    logoutBtn.innerText = "Login";
+    logoutBtn.style.background = "#2563eb";
+    bar.style.display = "flex";
+
+    // Login button click → Go to login page
+    logoutBtn.onclick = () => {
+      window.location.href = "admin_login.html";
+    };
+  }
+});
+
+// Logout functionality
+logoutBtn.addEventListener("click", () => {
+  if (logoutBtn.innerText === "Logout") {
+    signOut(auth)
+      .then(() => {
+        alert("Logged out successfully!");
+      });
+  }
+});
+
+</script>
+
+
+</body>
+</html>

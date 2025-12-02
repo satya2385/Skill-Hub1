@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>English Exam</title>
+    <link rel="stylesheet" href="english.css" />
+  </head>
+  <body>
+    <div class="card" id="app">
+      <button id="adminPanelBtn" class="admin-panel">⚙️ Admin</button>
+      <button id="logout" class="logout">Logout</button>
+
+      <header><h1>English Online Exam</h1></header>
+      <div class="timer" id="timer">⏱ Time: --:--</div>
+      <div class="question-area" id="questionArea"></div>
+
+      <div class="controls" id="controls">
+        <button id="nextBtn" class="btn-next">Next</button>
+        <button id="submitBtn" class="btn-submit">Submit</button>
+      </div>
+
+      <div id="feedback" class="result hidden"></div>
+    </div>
+
+    <!-- Questions -->
+    <script src="questions.js"></script>
+
+    <!-- Main Exam JS -->
+    <script type="module" src="english.js"></script>
+  </body>
+</html>
