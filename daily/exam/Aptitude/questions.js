@@ -1,38 +1,305 @@
-window.ENGLISH_QUESTIONS = [
+const APTITUDE_QUESTIONS = [
   {
     id: "q1",
-    q: "HTML stands for?",
-    options: [
-      "Hyper Text Markup Language", // ✅ correct
-      "Home Tool Markup Language",
-      "Hyperlinks and Text Markup Language",
-      "Highlevel Text Machine Language",
-    ],
-    answerIndex: 0, // first option is correct
+    q: "5 + 3 × 2 = ?",
+    options: ["16", "11", "10", "8"],
+    answerIndex: 1,
+  },
+  {
+    id: "q2",
+    q: "The square root of 144 is?",
+    options: ["10", "12", "14", "16"],
+    answerIndex: 1,
   },
   {
     id: "q3",
-    q: "CSS is used for?",
-    options: [
-      "Styling web pages", // ✅ correct
-      "Storing data",
-      "Connecting database",
-      "Building server",
-    ],
+    q: "If a train travels 60 km in 1.5 hours, its speed is?",
+    options: ["40 km/h", "45 km/h", "50 km/h", "60 km/h"],
     answerIndex: 0,
   },
   {
     id: "q4",
-    q: "Which symbol is used for comments in JavaScript?",
-    options: ["//", "<!-- -->", "##", "**"],
-    answerIndex: 0, // "//" is correct
+    q: "20% of 250 = ?",
+    options: ["40", "50", "60", "45"],
+    answerIndex: 1,
   },
   {
     id: "q5",
-    q: "Which company developed JavaScript?",
-    options: ["Mozilla", "Microsoft", "Netscape", "Oracle"],
-    answerIndex: 2, // "Netscape" is correct
+    q: "The next number in series 2, 4, 8, 16, ?",
+    options: ["18", "24", "32", "30"],
+    answerIndex: 2,
   },
+  {
+    id: "q6",
+    q: "15 + 5 × 2 = ?",
+    options: ["30", "25", "20", "35"],
+    answerIndex: 1,
+  },
+  {
+    id: "q7",
+    q: "If 7x = 21, x = ?",
+    options: ["2", "3", "4", "5"],
+    answerIndex: 1,
+  },
+  {
+    id: "q8",
+    q: "The area of a rectangle with length 8 cm and width 5 cm?",
+    options: ["40 cm²", "20 cm²", "30 cm²", "45 cm²"],
+    answerIndex: 0,
+  },
+  {
+    id: "q9",
+    q: "If the ratio of 2 numbers is 3:4 and their sum is 28, the numbers are?",
+    options: ["12,16", "10,18", "14,14", "15,13"],
+    answerIndex: 0,
+  },
+  {
+    id: "q10",
+    q: "If a = 3 and b = 4, find a² + b²",
+    options: ["12", "16", "25", "7"],
+    answerIndex: 2,
+  },
+  {
+    id: "q11",
+    q: "A bag contains 3 red, 2 blue, 5 green balls. Probability of picking red?",
+    options: ["3/10", "1/5", "1/2", "2/5"],
+    answerIndex: 0,
+  },
+  {
+    id: "q12",
+    q: "If the cost price is 200 and profit is 20%, selling price = ?",
+    options: ["220", "240", "250", "260"],
+    answerIndex: 0,
+  },
+  {
+    id: "q13",
+    q: "Simplify: 12 ÷ 4 × 3 = ?",
+    options: ["9", "12", "6", "10"],
+    answerIndex: 0,
+  },
+  {
+    id: "q14",
+    q: "What is 15% of 200?",
+    options: ["25", "30", "35", "40"],
+    answerIndex: 1,
+  },
+  {
+    id: "q15",
+    q: "If a train covers 150 km in 3 hours, speed = ?",
+    options: ["45 km/h", "50 km/h", "55 km/h", "60 km/h"],
+    answerIndex: 1,
+  },
+  {
+    id: "q16",
+    q: "LCM of 4 and 6?",
+    options: ["12", "24", "10", "18"],
+    answerIndex: 0,
+  },
+  {
+    id: "q17",
+    q: "HCF of 12 and 18?",
+    options: ["6", "3", "12", "18"],
+    answerIndex: 0,
+  },
+  {
+    id: "q18",
+    q: "The next number in series 1, 1, 2, 3, 5, ?",
+    options: ["6", "7", "8", "8"],
+    answerIndex: 3,
+  },
+  {
+    id: "q19",
+    q: "If x + 5 = 12, x = ?",
+    options: ["6", "7", "8", "5"],
+    answerIndex: 1,
+  },
+  {
+    id: "q20",
+    q: "If 3 pencils cost 15 rupees, 7 pencils cost?",
+    options: ["30", "35", "28", "25"],
+    answerIndex: 1,
+  },
+  {
+    id: "q21",
+    q: "The average of 5, 10, 15, 20, 25?",
+    options: ["15", "12", "20", "10"],
+    answerIndex: 0,
+  },
+  {
+    id: "q22",
+    q: "Solve: 5 × (2 + 3) = ?",
+    options: ["25", "10", "15", "30"],
+    answerIndex: 0,
+  },
+  {
+    id: "q23",
+    q: "If 8y = 64, y = ?",
+    options: ["6", "8", "10", "12"],
+    answerIndex: 1,
+  },
+  {
+    id: "q24",
+    q: "The product of 7 and 9?",
+    options: ["63", "56", "72", "49"],
+    answerIndex: 0,
+  },
+  {
+    id: "q25",
+    q: "A man walks 3 km north, 4 km east. Distance from start?",
+    options: ["5 km", "6 km", "7 km", "8 km"],
+    answerIndex: 2,
+  },
+  {
+    id: "q26",
+    q: "If 10% of a number is 5, number = ?",
+    options: ["50", "55", "45", "60"],
+    answerIndex: 0,
+  },
+  {
+    id: "q27",
+    q: "5 + 2 × 3 - 4 = ?",
+    options: ["7", "8", "9", "10"],
+    answerIndex: 1,
+  },
+  {
+    id: "q28",
+    q: "If 6 pens cost 30 rupees, 1 pen = ?",
+    options: ["4", "5", "6", "3"],
+    answerIndex: 1,
+  },
+  {
+    id: "q29",
+    q: "Find x: 2x + 7 = 15",
+    options: ["3", "4", "5", "6"],
+    answerIndex: 2,
+  },
+  {
+    id: "q30",
+    q: "The sum of angles in a triangle?",
+    options: ["90°", "180°", "270°", "360°"],
+    answerIndex: 1,
+  },
+  {
+    id: "q31",
+    q: "What is 7²?",
+    options: ["49", "42", "56", "36"],
+    answerIndex: 0,
+  },
+  {
+    id: "q32",
+    q: "10 × 0.5 = ?",
+    options: ["4", "5", "6", "7"],
+    answerIndex: 1,
+  },
+  {
+    id: "q33",
+    q: "If a:b = 3:4 and b = 20, a = ?",
+    options: ["10", "15", "12", "14"],
+    answerIndex: 2,
+  },
+  {
+    id: "q34",
+    q: "The perimeter of a square with side 5 cm?",
+    options: ["20 cm", "25 cm", "15 cm", "10 cm"],
+    answerIndex: 0,
+  },
+  {
+    id: "q35",
+    q: "If a = 2, b = 3, find a³ + b³",
+    options: ["9", "35", "31", "27"],
+    answerIndex: 2,
+  },
+  {
+    id: "q36",
+    q: "Simplify: 18 ÷ 3 × 2",
+    options: ["6", "9", "12", "15"],
+    answerIndex: 2,
+  },
+  {
+    id: "q37",
+    q: "The next number in series 10, 20, 30, ?",
+    options: ["40", "50", "35", "45"],
+    answerIndex: 0,
+  },
+  {
+    id: "q38",
+    q: "Find x: 3x - 9 = 0",
+    options: ["2", "3", "4", "5"],
+    answerIndex: 1,
+  },
+  {
+    id: "q39",
+    q: "If the cost price is 150 and loss is 10%, selling price = ?",
+    options: ["135", "140", "145", "150"],
+    answerIndex: 0,
+  },
+  {
+    id: "q40",
+    q: "5 + 5 ÷ 5 × 5 - 5 = ?",
+    options: ["5", "10", "15", "20"],
+    answerIndex: 1,
+  },
+  {
+    id: "q41",
+    q: "The sum of first 5 natural numbers?",
+    options: ["10", "15", "20", "25"],
+    answerIndex: 1,
+  },
+  {
+    id: "q42",
+    q: "50% of 80?",
+    options: ["30", "40", "50", "60"],
+    answerIndex: 1,
+  },
+  {
+    id: "q43",
+    q: "If a:b = 5:2 and a = 25, b = ?",
+    options: ["5", "10", "15", "20"],
+    answerIndex: 1,
+  },
+  {
+    id: "q44",
+    q: "The area of a triangle with base 10 cm and height 5 cm?",
+    options: ["25 cm²", "50 cm²", "15 cm²", "30 cm²"],
+    answerIndex: 0,
+  },
+  {
+    id: "q45",
+    q: "The cube root of 27?",
+    options: ["3", "9", "6", "12"],
+    answerIndex: 0,
+  },
+  {
+    id: "q46",
+    q: "Simplify: 7 + 3 × (10 ÷ 2)",
+    options: ["20", "22", "23", "25"],
+    answerIndex: 2,
+  },
+  {
+    id: "q47",
+    q: "If 60% of x = 30, x = ?",
+    options: ["40", "45", "50", "55"],
+    answerIndex: 2,
+  },
+  {
+    id: "q48",
+    q: "If 2 pencils cost 8 rupees, cost of 7 pencils?",
+    options: ["28", "24", "30", "25"],
+    answerIndex: 2,
+  },
+  {
+    id: "q49",
+    q: "The sum of 10 + 20 + 30 + 40 + 50?",
+    options: ["100", "120", "150", "200"],
+    answerIndex: 2,
+  },
+  {
+    id: "q50",
+    q: "If a train travels 90 km in 1.5 hours, speed = ?",
+    options: ["50 km/h", "55 km/h", "60 km/h", "65 km/h"],
+    answerIndex: 2,
+  },
+
   // {
   //  id: "q1",
   //  q: "images/q1.png",
@@ -45,3 +312,4 @@ window.ENGLISH_QUESTIONS = [
   //  answerIndex: 0 // correct is now first
   // },
 ];
+
